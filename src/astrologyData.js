@@ -1,18 +1,18 @@
 // src/astrologyData.js
 
 export const RASHIS = [
-  { name: "Mesha (Aries)", element: "Fire", ruler: "Mars (Kuja)" },
-  { name: "Vrishabha (Taurus)", element: "Earth", ruler: "Venus (Shukra)" },
-  { name: "Mithuna (Gemini)", element: "Air", ruler: "Mercury (Budha)" },
-  { name: "Kataka (Cancer)", element: "Water", ruler: "Moon (Chandra)" },
-  { name: "Simha (Leo)", element: "Fire", ruler: "Sun (Surya)" },
-  { name: "Kanya (Virgo)", element: "Earth", ruler: "Mercury (Budha)" },
-  { name: "Thula (Libra)", element: "Air", ruler: "Venus (Shukra)" },
-  { name: "Vrishchika (Scorpio)", element: "Water", ruler: "Mars (Kuja)" },
-  { name: "Dhanu (Sagittarius)", element: "Fire", ruler: "Jupiter (Guru)" },
-  { name: "Makara (Capricorn)", element: "Earth", ruler: "Saturn (Shani)" },
-  { name: "Kumbha (Aquarius)", element: "Air", ruler: "Saturn (Shani)" },
-  { name: "Meena (Pisces)", element: "Water", ruler: "Jupiter (Guru)" }
+  { name: "Mesha (Aries)", element: "Fire" },
+  { name: "Vrishabha (Taurus)", element: "Earth" },
+  { name: "Mithuna (Gemini)", element: "Air" },
+  { name: "Kataka (Cancer)", element: "Water" },
+  { name: "Simha (Leo)", element: "Fire" },
+  { name: "Kanya (Virgo)", element: "Earth" },
+  { name: "Thula (Libra)", element: "Air" },
+  { name: "Vrishchika (Scorpio)", element: "Water" },
+  { name: "Dhanu (Sagittarius)", element: "Fire" },
+  { name: "Makara (Capricorn)", element: "Earth" },
+  { name: "Kumbha (Aquarius)", element: "Air" },
+  { name: "Meena (Pisces)", element: "Water" }
 ];
 
 export const getApproximatedRashi = (month, day) => {
@@ -30,64 +30,80 @@ export const getApproximatedRashi = (month, day) => {
   return "Meena (Pisces)";
 };
 
-// Specialized Life Area Text Matrix Mapping
-const getLifeAreaReadings = (elem1, elem2) => {
-  const combination = [elem1, elem2].sort().join("-");
+// Generates personalized readings with pros and cons, integrating user names and elements dynamically
+const generatePersonalizedReadings = (p1, p2, e1, e2) => {
+  const combination = [e1, e2].sort().join("-");
+  
+  // Default fallbacks for clashing or neutral element combinations
+  let data = {
+    romantic: {
+      pro: `The cosmic bond between ${p1} and ${p2} thrives on a magnetic fascination of opposites. Because your elements operate on totally different planes, you challenge each other to step out of your comfort zones, creating an interesting dynamic where boredom is never an issue.`,
+      con: `Friction arises because ${p1}'s instinctive way of expressing affection can feel completely foreign to ${p2}. If left unaddressed, ${p2} might feel emotionally unfulfilled, while ${p1} might feel misunderstood or unfairly pressured.`
+    },
+    financial: {
+      pro: `When it comes to money, you form an accidental check-and-balance system. One of you naturally looks at immediate growth, while the other acts as an anchor, ensuring you don't jump into bad investments blindly.`,
+      con: `The core risk is financial gridlock. ${p1}'s spending patterns or financial risk threshold will occasionally clash with ${p2}'s long-term comfort level, leading to secret budgeting disagreements.`
+    },
+    health: {
+      pro: `Your varying physical and mental energies mean you can take turns being the caregiver. When ${p1} is feeling exhausted, ${p2} naturally has the specific type of energy needed to lift them up.`,
+      con: `Your recovery cycles are entirely different. If ${p1} needs active movement to decompress while ${p2} needs complete silence, you risk draining each other's energy reserves during periods of high life stress.`
+    },
+    family: {
+      pro: `Your household will benefit from two completely unique upbringings and viewpoints. Together, ${p1} and ${p2} can build a family environment that teaches flexibility and broad perspectives.`,
+      con: `Domestic decisions can become power struggles. ${p1} will want to handle domestic structures or timelines in a way that triggers anxiety in ${p2}, requiring conscious compromise over daily household routines.`
+    }
+  };
 
-  switch (combination) {
-    case "Fire-Fire":
-      return {
-        romantic: "Extremely passionate, energetic, and spontaneous. You spark inspiration in each other, but minor arguments can escalate into dramatic standoffs quickly if ego gets in the way.",
-        financial: "High-risk, high-reward. You both possess the drive to pursue massive entrepreneurial ambitions together, but you must establish strict budgeting rules to prevent impulsive combined spending.",
-        health: "Mainly governed by high vital energy. However, shared stress can lead to physical burnout, inflammation, or exhaustion. You must actively encourage each other to take restorative breaks.",
-        family: "A lively, loud, and exceptionally supportive household. Your home will be filled with activities and social gatherings, though establishing quiet routines will require deliberate effort."
-      };
-    case "Air-Fire":
-      return {
-        romantic: "Highly stimulating and intellectually vibrant. The Air partner fuels the Fire partner's creativity with brilliant concepts, resulting in a bond that constantly evolves and avoids boredom.",
-        financial: "Excellent for joint ventures and collaborative brainstorming. Air designs the blueprint and financial roadmaps, while Fire provides the pure drive to execute and generate income.",
-        health: "Mental stress is your main shared vulnerability. Air's overthinking coupled with Fire's anxiety can disrupt sleep patterns. Focus on calming, outdoor-focused routines.",
-        family: "An open-minded, forward-thinking environment. You prioritize open communication, intellectual curiosity, and freedom, raising independent family members who love to explore."
-      };
-    case "Earth-Water":
-      return {
-        romantic: "Deeply nurturing, safe, and emotionally profound. Water brings emotional vulnerability into the relationship, while Earth builds a secure, reliable foundation where love can bloom over decades.",
-        financial: "Superb for long-term wealth accumulation. You both naturally prioritize security, real estate, solid investments, and building a comfortable retirement nest egg together.",
-        health: "Highly stabilizing. You intuitively tend to each other's physical well-being, home-cooked nutrition, and emotional balance, leading to excellent overall physical health metrics.",
-        family: "The classic peaceful home. Exceptionally grounded, structured, and protective. You excel at creating a cozy domestic sanctuary where traditions are cherished and respected."
-      };
-    case "Earth-Earth":
-      return {
-        romantic: "Immensely loyal, stable, and deeply predictable. You express affection through practical acts of service and physical presence rather than sweeping dramatic poetry.",
-        financial: "The ultimate power couple for financial discipline. You track expenses meticulously and minimize unnecessary risks, though you should occasionally allow yourselves to splurge and celebrate.",
-        health: "Prone to physical stiffness or stress-related routine ruts. Because you work so hard, you might ignore subtle warning signs of fatigue. Prioritize regular joint relaxation.",
-        family: "A highly organized, beautifully run household with immovable boundaries. You provide magnificent structural stability, but remember to inject occasional fun to break up strict rules."
-      };
-    case "Air-Air":
-      return {
-        romantic: "A beautiful meeting of minds built on absolute friendship and conversational synergy. You can talk for hours about everything under the sun, though you may need to intentionally cultivate deeper emotional intimacy.",
-        financial: "Great for digital work, investments, and creative ideas, but actual cash savings can fluctuate due to a shared tendency to overlook boring day-to-day administrative details.",
-        health: "Mainly centers around the nervous system. Over-analysis and a non-stop mental motor can trigger anxiety or restlessness. Incorporating technology-free windows will work wonders.",
-        family: "A home packed with books, devices, and continuous dialogue. You treat family members like equals and value intellectual independence, though establishing domestic chores requires discipline."
-      };
-    case "Water-Water":
-      return {
-        romantic: "An incredibly deep, almost psychic emotional fusion. You absorb each other's moods instantly without needing words, resulting in an beautiful, highly empathetic romantic world.",
-        financial: "Highly dependent on emotional states. You might engage in emotional retail therapy when stressed. Appointing a neutral financial advisor or automated saving tool is highly recommended.",
-        health: "Deeply linked to emotional health. Suppressed relationship friction can quickly manifest as physical lethargy or digestive issues. Emotional transparency keeps you physically fit.",
-        family: "An incredibly protective, deeply intuitive home environment. Empathy rules the household, making it a safe haven from the outside world, though you must guard against collective over-sensitivity."
-      };
-    default: // Clashing Elements (Fire-Water, Fire-Earth, Air-Water, Air-Earth)
-      return {
-        romantic: "A dynamic case of 'opposites attract'. You operate on entirely different emotional tracks, which creates massive fascination initially, but requires continuous adjustments to keep both satisfied.",
-        financial: "One partner is naturally cautious while the other is a risk-taker. This balance can prevent financial disasters if you compromise, or cause friction if you try to control each other's styles.",
-        health: "Friction occurs when your recovery needs clash (e.g., one wants to socialize to decompress, while the other needs absolute silence). Learn to respect each other's energy recharge methods.",
-        family: "A diverse domestic environment where two completely unique worlds blend. It offers incredible growth opportunities for everyone involved, as long as differences are celebrated instead of critiqued."
-      };
+  // Specialized overrides for synergistic setups
+  if (e1 === e2) {
+    // SAME ELEMENT SYNERGY
+    data.romantic.pro = `The romantic alignment between ${p1} and ${p2} is effortless because you both share the ${e1} element. ${p1} intuitively understands exactly what makes ${p2} feel loved and secure without a single word being spoken.`;
+    data.romantic.con = `The downside is a celestial echo-chamber. Because you react to romantic stress identically, an emotional slump triggered by ${p1} will immediately pull ${p2} down into the same mood, making it hard to snap out of disagreements.`;
+    
+    data.financial.pro = `${p1} and ${p2} share identical core values regarding financial security. Whether you are both natural savers or bold spenders, you will agree seamlessly on major investments and long-term purchases.`;
+    data.financial.con = `You share the exact same financial blindspots. If ${p1} lets administrative tasks or bills slide, ${p2} is likely to overlook them too, potentially leading to sudden, unmanaged overhead strains.`;
+
+    data.health.pro = `Your physical and emotional biorhythms match beautifully. ${p1} and ${p2} share similar vital capacities and thrive under the exact same types of stress-relief and wellness habits.`;
+    data.health.con = `Shared vulnerabilities mean you get sick or burned out together. If ${p1} encounters high work anxiety, it will physically manifest as lethargy in ${p2} through an emotional chain reaction.`;
+
+    data.family.pro = `Your home life will be exceptionally unified. ${p1} and ${p2} naturally agree on hospitality, parenting styles, and how your living space should look and feel.`;
+    data.family.con = `The danger is absolute stagnation. Because neither ${p1} nor ${p2} introduces a contrasting element to push the household forward, your home routines can become rigid ruts that are difficult to change.`;
+  } 
+  else if (combination === "Air-Fire") {
+    const firePerson = e1 === "Fire" ? p1 : p2;
+    const airPerson = e1 === "Air" ? p1 : p2;
+    data.romantic.pro = `This is a highly radiant configuration. ${airPerson}'s brilliant ideas and communication style directly fuel ${firePerson}'s romantic passion, creating an incredibly fun and dynamic bond.`;
+    data.romantic.con = `The risk is a literal burnout. ${firePerson}'s intense emotional outbursts or impatience can occasionally evaporate ${airPerson}'s mental peace, leaving ${airPerson} feeling completely detached.`;
+    
+    data.financial.pro = `You have amazing collaborative power. ${airPerson} is excellent at spotting modern investment opportunities and budgeting paths, while ${firePerson} has the raw courage to execute them successfully.`;
+    data.financial.con = `Impulse risks run high. ${firePerson} may push for high-risk ventures or expensive luxury purchases before ${airPerson} has time to analyze if the numbers actually make real-world sense.`;
+
+    data.health.pro = `You keep each other youthful and active. ${firePerson} motivates ${airPerson} to prioritize movement and physical fitness, while ${airPerson} helps soothe ${firePerson}'s active nervous system.`;
+    data.health.con = `Mental anxiety is highly contagious here. When ${airPerson} gets lost in deep overthinking, it acts like wind on fire—instantly spiking ${firePerson}'s physical stress metrics and disrupting sleep cycles.`;
+
+    data.family.pro = `An incredibly vibrant, forward-thinking household. ${airPerson} ensures your home is intellectual and communicative, while ${firePerson} fills the living space with celebration, warmth, and memorable milestones.`;
+    data.family.con = `A lack of domestic grounding can cause issues. Because both ${firePerson} and ${airPerson} love freedom and movement, standard domestic chores and everyday household organization can easily fall into total disarray.`;
   }
+  else if (combination === "Earth-Water") {
+    const earthPerson = e1 === "Earth" ? p1 : p2;
+    const waterPerson = e1 === "Water" ? p1 : p2;
+    data.romantic.pro = `This is an incredibly healing and stable romantic layout. ${earthPerson} provides an unshakeable emotional anchor that makes ${waterPerson} feel completely safe, while ${waterPerson} introduces deep, magical emotional vulnerability that melts ${earthPerson}'s defenses.`;
+    data.romantic.con = `The danger lies in emotional absorption. ${waterPerson}'s heavy mood swings or unspoken anxieties can slowly erode ${earthPerson}'s patient, logical baseline, causing ${earthPerson} to shut down or grow distant.`;
+    
+    data.financial.pro = `This is a financial power-match. ${earthPerson} brings incredible discipline, asset building, and management to the table, which perfectly preserves and protects the long-term wealth of the relationship.`;
+    data.financial.con = `A clash over worth can occur. ${waterPerson} will occasionally want to spend money on spontaneous emotional experiences or gifts, which ${earthPerson} might critically label as unnecessary or impractical risk.`;
+
+    data.health.pro = `Your physical wellness approaches complement each other perfectly. ${earthPerson} naturally stabilizes daily eating habits and physical structure, while ${waterPerson} ensures both of you pay attention to your psychological health.`;
+    data.health.con = `You risk falling into a shared lethargy. If ${waterPerson} enters an emotional slump, ${earthPerson} might lean too heavily into comfort habits, resulting in a joint cycle of low physical activity.`;
+
+    data.family.pro = `Your household is a true sanctuary. ${earthPerson} excels at keeping the home physically flawless, structured, and financially secure, while ${waterPerson} ensures it is deeply warm, loving, and supportive.`;
+    data.family.con = `Over-protection can limit growth. Because ${earthPerson} fears real-world disruption and ${waterPerson} absorbs external stress easily, your family environment can become overly insulated from the outside world.`;
+  }
+
+  return data;
 };
 
-export const calculateCrushMatch = (userRashiName, crushRashiName, userLocation, crushLocation) => {
+export const calculateCrushMatch = (userRashiName, crushRashiName, userLocation, crushLocation, userName, crushName) => {
   const user = RASHIS.find(r => r.name === userRashiName);
   const crush = RASHIS.find(r => r.name === crushRashiName);
 
@@ -101,7 +117,6 @@ export const calculateCrushMatch = (userRashiName, crushRashiName, userLocation,
 
   let score = 40; 
 
-  // Compute Rashi Base Positioning Score
   if (positionsApart === 1) score += 45;
   else if (positionsApart === 7) score += 50;
   else if ([5, 9].includes(positionsApart)) score += 35;
@@ -109,14 +124,13 @@ export const calculateCrushMatch = (userRashiName, crushRashiName, userLocation,
   else if ([2, 12, 6, 8].includes(positionsApart)) score += 5;
   else score += 15;
 
-  // Elemental adjustment
   if (user.element === crush.element) score += 10;
   else score -= 5;
 
   score = Math.max(15, Math.min(score, 100));
 
-  // Pull life categories descriptions
-  const lifeAreas = getLifeAreaReadings(user.element, crush.element);
+  // Generate personalized pro/con readings with names passed in
+  const lifeAreas = generatePersonalizedReadings(userName, crushName, user.element, crush.element);
 
   let summary = "Asubha (High Friction)";
   let colorTheme = "red";

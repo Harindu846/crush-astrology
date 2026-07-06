@@ -32,7 +32,8 @@ export default function App() {
     const uLoc = `${yourCity}, ${yourCountry}`;
     const cLoc = `${crushCity}, ${crushCountry}`;
 
-    const results = calculateCrushMatch(userRashi, crushRashi, uLoc, cLoc);
+    // Pass original names into the updated matrix call
+    const results = calculateCrushMatch(userRashi, crushRashi, uLoc, cLoc, yourName, crushName);
     setMatchResult(results);
   };
 
@@ -63,16 +64,16 @@ export default function App() {
 
         {!matchResult ? (
           <form onSubmit={handleCalculate} className="space-y-4">
-            {/* INPUT FORM (STAYS EXACTLY SAME AS BEFORE) */}
+            {/* USER FORM CARD */}
             <div className="bg-neutral-900/60 p-4 rounded-2xl border border-neutral-700/30">
               <h2 className="text-sm font-bold text-amber-400 mb-2">⭐ Your Details</h2>
               <div className="space-y-2">
-                <input required type="text" placeholder="Your Name" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourName} onChange={(e) => setYourName(e.target.value)} />
+                <input required type="text" placeholder="Your Name" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-amber-500" value={yourName} onChange={(e) => setYourName(e.target.value)} />
                 <div className="grid grid-cols-2 gap-2">
-                  <input required type="text" placeholder="Birth City" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourCity} onChange={(e) => setYourCity(e.target.value)} />
-                  <input required type="text" placeholder="Country" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourCountry} onChange={(e) => setYourCountry(e.target.value)} />
+                  <input required type="text" placeholder="Birth City" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-amber-500" value={yourCity} onChange={(e) => setYourCity(e.target.value)} />
+                  <input required type="text" placeholder="Country" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-amber-500" value={yourCountry} onChange={(e) => setYourCountry(e.target.value)} />
                 </div>
-                <input required type="date" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourDob} onChange={(e) => setYourDob(e.target.value)} />
+                <input required type="date" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-amber-500" value={yourDob} onChange={(e) => setYourDob(e.target.value)} />
                 <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer pt-1">
                   <input type="checkbox" checked={knowsYourTime} onChange={(e) => setKnowsYourTime(e.target.checked)} />
                   I know my exact birth time
@@ -81,15 +82,16 @@ export default function App() {
               </div>
             </div>
 
+            {/* CRUSH FORM CARD */}
             <div className="bg-neutral-900/60 p-4 rounded-2xl border border-neutral-700/30">
               <h2 className="text-sm font-bold text-rose-400 mb-2">❤️ Your Crush</h2>
               <div className="space-y-2">
-                <input required type="text" placeholder="Their Name" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushName} onChange={(e) => setCrushName(e.target.value)} />
+                <input required type="text" placeholder="Their Name" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500" value={crushName} onChange={(e) => setCrushName(e.target.value)} />
                 <div className="grid grid-cols-2 gap-2">
-                  <input required type="text" placeholder="Birth City" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushCity} onChange={(e) => setCrushCity(e.target.value)} />
-                  <input required type="text" placeholder="Country" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushCountry} onChange={(e) => setCrushCountry(e.target.value)} />
+                  <input required type="text" placeholder="Birth City" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500" value={crushCity} onChange={(e) => setCrushCity(e.target.value)} />
+                  <input required type="text" placeholder="Country" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500" value={crushCountry} onChange={(e) => setCrushCountry(e.target.value)} />
                 </div>
-                <input required type="date" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushDob} onChange={(e) => setCrushDob(e.target.value)} />
+                <input required type="date" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500" value={crushDob} onChange={(e) => setCrushDob(e.target.value)} />
                 <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer pt-1">
                   <input type="checkbox" checked={knowsCrushTime} onChange={(e) => setKnowsCrushTime(e.target.checked)} />
                   I know their exact birth time
@@ -98,12 +100,12 @@ export default function App() {
               </div>
             </div>
 
-            <button type="submit" className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm rounded-xl uppercase">
+            <button type="submit" className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm rounded-xl uppercase tracking-wider">
               Calculate Alignment
             </button>
           </form>
         ) : (
-          /* DEEP LIFE FOCUS READINGS */
+          /* PERSONALIZED TWO-PARAGRAPH RESULTS */
           <div className="space-y-5 animate-fade-in">
             <div className="text-center">
               <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold">{yourName} & {crushName}</p>
@@ -117,35 +119,43 @@ export default function App() {
               </div>
             </div>
 
-            {/* THE FOUR LIFE SECTORS BREAKDOWN */}
-            <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+            {/* TWO-PARAGRAPH FORMATTED LIST */}
+            <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
               
-              <div className="bg-neutral-900/50 p-4 rounded-xl border border-neutral-700/30">
-                <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase mb-1">
+              {/* ROMANTIC */}
+              <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-700/30 space-y-2.5">
+                <div className="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
                   <span>🌹</span> Romantic Destiny
                 </div>
-                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.lifeAreas.romantic}</p>
+                <p className="text-xs text-neutral-200 leading-relaxed"><span className="text-emerald-400 font-semibold">✨ Cosmic Strength:</span> {matchResult.lifeAreas.romantic.pro}</p>
+                <p className="text-xs text-neutral-300 leading-relaxed"><span className="text-rose-400 font-semibold">⚠️ Things to Consider:</span> {matchResult.lifeAreas.romantic.con}</p>
               </div>
 
-              <div className="bg-neutral-900/50 p-4 rounded-xl border border-neutral-700/30">
-                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase mb-1">
+              {/* FINANCIAL */}
+              <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-700/30 space-y-2.5">
+                <div className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                   <span>💰</span> Financial Alignment
                 </div>
-                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.lifeAreas.financial}</p>
+                <p className="text-xs text-neutral-200 leading-relaxed"><span className="text-emerald-400 font-semibold">✨ Cosmic Strength:</span> {matchResult.lifeAreas.financial.pro}</p>
+                <p className="text-xs text-neutral-300 leading-relaxed"><span className="text-amber-400 font-semibold">⚠️ Things to Consider:</span> {matchResult.lifeAreas.financial.con}</p>
               </div>
 
-              <div className="bg-neutral-900/50 p-4 rounded-xl border border-neutral-700/30">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase mb-1">
+              {/* HEALTH */}
+              <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-700/30 space-y-2.5">
+                <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
                   <span>🌱</span> Health & Vitality Impact
                 </div>
-                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.lifeAreas.health}</p>
+                <p className="text-xs text-neutral-200 leading-relaxed"><span className="text-emerald-400 font-semibold">✨ Cosmic Strength:</span> {matchResult.lifeAreas.health.pro}</p>
+                <p className="text-xs text-neutral-300 leading-relaxed"><span className="text-orange-400 font-semibold">⚠️ Things to Consider:</span> {matchResult.lifeAreas.health.con}</p>
               </div>
 
-              <div className="bg-neutral-900/50 p-4 rounded-xl border border-neutral-700/30">
-                <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase mb-1">
+              {/* FAMILY */}
+              <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-700/30 space-y-2.5">
+                <div className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
                   <span>🏡</span> Family & Domestic Life
                 </div>
-                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.lifeAreas.family}</p>
+                <p className="text-xs text-neutral-200 leading-relaxed"><span className="text-emerald-400 font-semibold">✨ Cosmic Strength:</span> {matchResult.lifeAreas.family.pro}</p>
+                <p className="text-xs text-neutral-300 leading-relaxed"><span className="text-blue-400 font-semibold">⚠️ Things to Consider:</span> {matchResult.lifeAreas.family.con}</p>
               </div>
 
             </div>
