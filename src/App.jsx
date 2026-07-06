@@ -17,24 +17,57 @@ export default function App() {
   const [knowsCrushTime, setKnowsCrushTime] = useState(false);
   const [crushTime, setCrushTime] = useState('');
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
   const [matchResult, setMatchResult] = useState(null);
+  const [revealChallenges, setRevealChallenges] = useState({});
+  const [copied, setCopied] = useState(false);
 
-  const handleCalculate = (e) => {
+  const triggerCosmicCalculation = (e) => {
     e.preventDefault();
     if (!yourDob || !crushDob) return;
 
-    const uDate = new Date(yourDob);
-    const userRashi = getApproximatedRashi(uDate.getMonth() + 1, uDate.getDate());
+    setIsLoading(true);
+    const phases = [
+      "Aligning celestial coordinates...",
+      "Mapping elemental frequencies...",
+      "Weaving karmic compatibility paths...",
+      "Generating personalized destiny profile..."
+    ];
 
-    const cDate = new Date(crushDob);
-    const crushRashi = getApproximatedRashi(cDate.getMonth() + 1, cDate.getDate());
+    phases.forEach((text, index) => {
+      setTimeout(() => {
+        setLoadingText(text);
+        if (index === phases.length - 1) {
+          setTimeout(() => {
+            const uDate = new Date(yourDob);
+            const userRashi = getApproximatedRashi(uDate.getMonth() + 1, uDate.getDate());
+            const cDate = new Date(crushDob);
+            const crushRashi = getApproximatedRashi(cDate.getMonth() + 1, cDate.getDate());
+            
+            const results = calculateCrushMatch(
+              userRashi, crushRashi, 
+              `${yourCity}, ${yourCountry}`, `${crushCity}, ${crushCountry}`, 
+              yourName, crushName
+            );
 
-    const uLoc = `${yourCity}, ${yourCountry}`;
-    const cLoc = `${crushCity}, ${crushCountry}`;
+            setMatchResult(results);
+            setIsLoading(false);
+          }, 1000);
+        }
+      }, index * 900);
+    });
+  };
 
-    // Pass original names into the updated matrix call
-    const results = calculateCrushMatch(userRashi, crushRashi, uLoc, cLoc, yourName, crushName);
-    setMatchResult(results);
+  const getPsychologicalBadge = (score) => {
+    if (score >= 85) return { title: "Cosmic Twin Flames", desc: "Absolute Soul Alignment", color: "from-pink-400 to-rose-400 text-pink-400 shadow-pink-500/20" };
+    if (score >= 70) return { title: "Harmonious Destinies", desc: "Deep Karmic Resonance", color: "from-fuchsia-400 to-pink-500 text-fuchsia-400 shadow-fuchsia-500/20" };
+    if (score >= 50) return { title: "Magnetic Opposites", desc: "High Passion, High Growth", color: "from-purple-400 to-pink-500 text-purple-400 shadow-purple-500/20" };
+    return { title: "Growth Catalysts", desc: "Testing Evolutionary Bounds", color: "from-neutral-400 to-pink-400 text-neutral-300 shadow-neutral-500/10" };
+  };
+
+  const toggleChallenge = (section) => {
+    setRevealChallenges(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
   const handleReset = () => {
@@ -49,120 +82,227 @@ export default function App() {
     setCrushCity('');
     setCrushTime('');
     setKnowsCrushTime(false);
+    setRevealChallenges({});
+    setCopied(false);
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-neutral-100 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-neutral-800 rounded-3xl shadow-2xl border border-neutral-700/50 p-6">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col items-center justify-center p-4 selection:bg-pink-500/30 font-sans antialiased relative overflow-hidden">
+      
+      {/* Deep Ambient Midnight Pink Radial Halos */}
+      <div className="absolute top-[-10%] left-[-20%] w-[60rem] h-[60rem] bg-pink-900/10 rounded-full blur-[140px] pointer-events-none animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-20%] w-[50rem] h-[50rem] bg-fuchsia-950/10 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Outer Shell Card Container */}
+      <div className="max-w-md w-full bg-neutral-900/40 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_0_60px_rgba(219,39,119,0.07)] border border-neutral-800/60 p-6 relative overflow-hidden">
         
-        <div className="text-center mb-6">
-          <span className="text-4xl inline-block">✨</span>
-          <h1 className="text-2xl font-black bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent mt-2 tracking-wide uppercase">
-            Cosmic Crush Matcher
+        {/* Dynamic Interactive Top Accent line */}
+        <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-pink-500 to-transparent opacity-80" />
+
+        {/* APPLICATION BRAND HEADER */}
+        <div className="text-center mb-6 relative z-10">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-rose-500 to-fuchsia-600 shadow-lg shadow-pink-500/20">
+            <span className="text-xl text-white">💖</span>
+          </div>
+          <h1 className="text-2xl font-black bg-gradient-to-r from-white via-pink-200 to-fuchsia-100 bg-clip-text text-transparent mt-3 tracking-tight uppercase">
+            Karmic Destiny Bond
           </h1>
+          <p className="text-[10px] text-pink-400/70 font-bold tracking-widest mt-1 uppercase">Vedic Alignment & Elemental Synergy</p>
         </div>
 
-        {!matchResult ? (
-          <form onSubmit={handleCalculate} className="space-y-4">
-            {/* USER FORM CARD */}
-            <div className="bg-neutral-900/60 p-4 rounded-2xl border border-neutral-700/30">
-              <h2 className="text-sm font-bold text-amber-400 mb-2">⭐ Your Details</h2>
-              <div className="space-y-2">
-                <input required type="text" placeholder="Your Name" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-amber-500" value={yourName} onChange={(e) => setYourName(e.target.value)} />
+        {/* LOADING ENGINE */}
+        {isLoading ? (
+          <div className="py-20 flex flex-col items-center justify-center space-y-6 relative z-10">
+            <div className="relative flex items-center justify-center">
+              <div className="w-16 h-16 border-2 border-dashed border-pink-500 rounded-full animate-spin"></div>
+              <div className="absolute w-10 h-10 border-2 border-dotted border-fuchsia-400 rounded-full animate-ping opacity-60"></div>
+            </div>
+            <p className="text-xs font-semibold text-pink-200/90 tracking-wide text-center bg-pink-950/20 px-4 py-2 rounded-full border border-pink-900/30 shadow-sm">
+              {loadingText}
+            </p>
+          </div>
+        ) : !matchResult ? (
+          
+          /* GLOWING INPUT CONTROLS */
+          <form onSubmit={triggerCosmicCalculation} className="space-y-4 relative z-10">
+            
+            {/* INPUT BLOCK A: YOUR DETAILS */}
+            <div className="bg-neutral-900/60 p-4 rounded-3xl border border-neutral-800/80 transition-all hover:border-pink-500/20 focus-within:border-pink-500/30 shadow-md">
+              <h2 className="text-xs font-extrabold uppercase tracking-wider text-pink-400 mb-3 flex items-center gap-1.5">
+                ✨ Your Details
+              </h2>
+              <div className="space-y-2.5">
+                <input required type="text" placeholder="Your Name" className="w-full px-4 py-2.5 bg-neutral-950/80 border border-neutral-800/80 rounded-xl text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/20 transition-all" value={yourName} onChange={(e) => setYourName(e.target.value)} />
                 <div className="grid grid-cols-2 gap-2">
-                  <input required type="text" placeholder="Birth City" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-amber-500" value={yourCity} onChange={(e) => setYourCity(e.target.value)} />
-                  <input required type="text" placeholder="Country" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-amber-500" value={yourCountry} onChange={(e) => setYourCountry(e.target.value)} />
+                  <input required type="text" placeholder="Birth City" className="w-full px-4 py-2.5 bg-neutral-950/80 border border-neutral-800/80 rounded-xl text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/20 transition-all" value={yourCity} onChange={(e) => setYourCity(e.target.value)} />
+                  <input required type="text" placeholder="Country" className="w-full px-4 py-2.5 bg-neutral-950/80 border border-neutral-800/80 rounded-xl text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/20 transition-all" value={yourCountry} onChange={(e) => setYourCountry(e.target.value)} />
                 </div>
-                <input required type="date" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-amber-500" value={yourDob} onChange={(e) => setYourDob(e.target.value)} />
-                <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer pt-1">
-                  <input type="checkbox" checked={knowsYourTime} onChange={(e) => setKnowsYourTime(e.target.checked)} />
+                <input required type="date" className="w-full px-4 py-2.5 bg-neutral-950/80 border border-neutral-800/80 rounded-xl text-sm text-neutral-300 focus:outline-none focus:border-pink-500/70 transition-colors cursor-pointer" value={yourDob} onChange={(e) => setYourDob(e.target.value)} />
+                
+                <label className="flex items-center gap-2 text-[11px] text-neutral-400 cursor-pointer pt-0.5 select-none hover:text-pink-300/80 transition-colors">
+                  <input type="checkbox" className="accent-pink-500 rounded bg-neutral-950 border-neutral-800" checked={knowsYourTime} onChange={(e) => setKnowsYourTime(e.target.checked)} />
                   I know my exact birth time
                 </label>
-                {knowsYourTime && <input type="time" className="w-full mt-1 px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourTime} onChange={(e) => setYourTime(e.target.value)} />}
+                {knowsYourTime && <input type="time" className="w-full mt-1 px-4 py-2 bg-neutral-950/90 border border-neutral-800/80 rounded-xl text-sm text-neutral-200 focus:outline-none focus:border-pink-500/70" value={yourTime} onChange={(e) => setYourTime(e.target.value)} />}
               </div>
             </div>
 
-            {/* CRUSH FORM CARD */}
-            <div className="bg-neutral-900/60 p-4 rounded-2xl border border-neutral-700/30">
-              <h2 className="text-sm font-bold text-rose-400 mb-2">❤️ Your Crush</h2>
-              <div className="space-y-2">
-                <input required type="text" placeholder="Their Name" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500" value={crushName} onChange={(e) => setCrushName(e.target.value)} />
+            {/* INPUT BLOCK B: CRUSH DETAILS */}
+            <div className="bg-neutral-900/60 p-4 rounded-3xl border border-neutral-800/80 transition-all hover:border-fuchsia-500/20 focus-within:border-fuchsia-500/30 shadow-md">
+              <h2 className="text-xs font-extrabold uppercase tracking-wider text-fuchsia-400 mb-3 flex items-center gap-1.5">
+                🌸 Your Crush
+              </h2>
+              <div className="space-y-2.5">
+                <input required type="text" placeholder="Their Name" className="w-full px-4 py-2.5 bg-neutral-950/80 border border-neutral-800/80 rounded-xl text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-fuchsia-500/70 focus:ring-1 focus:ring-fuchsia-500/20 transition-all" value={crushName} onChange={(e) => setCrushName(e.target.value)} />
                 <div className="grid grid-cols-2 gap-2">
-                  <input required type="text" placeholder="Birth City" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500" value={crushCity} onChange={(e) => setCrushCity(e.target.value)} />
-                  <input required type="text" placeholder="Country" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500" value={crushCountry} onChange={(e) => setCrushCountry(e.target.value)} />
+                  <input required type="text" placeholder="Birth City" className="w-full px-4 py-2.5 bg-neutral-950/80 border border-neutral-800/80 rounded-xl text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-fuchsia-500/70 focus:ring-1 focus:ring-fuchsia-500/20 transition-all" value={crushCity} onChange={(e) => setCrushCity(e.target.value)} />
+                  <input required type="text" placeholder="Country" className="w-full px-4 py-2.5 bg-neutral-950/80 border border-neutral-800/80 rounded-xl text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-fuchsia-500/70 focus:ring-1 focus:ring-fuchsia-500/20 transition-all" value={crushCountry} onChange={(e) => setCrushCountry(e.target.value)} />
                 </div>
-                <input required type="date" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500" value={crushDob} onChange={(e) => setCrushDob(e.target.value)} />
-                <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer pt-1">
-                  <input type="checkbox" checked={knowsCrushTime} onChange={(e) => setKnowsCrushTime(e.target.checked)} />
+                <input required type="date" className="w-full px-4 py-2.5 bg-neutral-950/80 border border-neutral-800/80 rounded-xl text-sm text-neutral-300 focus:outline-none focus:border-fuchsia-500/70 transition-colors cursor-pointer" value={crushDob} onChange={(e) => setCrushDob(e.target.value)} />
+                
+                <label className="flex items-center gap-2 text-[11px] text-neutral-400 cursor-pointer pt-0.5 select-none hover:text-fuchsia-300/80 transition-colors">
+                  <input type="checkbox" className="accent-fuchsia-500 rounded bg-neutral-950 border-neutral-800" checked={knowsCrushTime} onChange={(e) => setKnowsCrushTime(e.target.checked)} />
                   I know their exact birth time
                 </label>
-                {knowsCrushTime && <input type="time" className="w-full mt-1 px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushTime} onChange={(e) => setCrushTime(e.target.value)} />}
+                {knowsCrushTime && <input type="time" className="w-full mt-1 px-4 py-2 bg-neutral-950/90 border border-neutral-800/80 rounded-xl text-sm text-neutral-200 focus:outline-none focus:border-fuchsia-500/70" value={crushTime} onChange={(e) => setCrushTime(e.target.value)} />}
               </div>
             </div>
 
-            <button type="submit" className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm rounded-xl uppercase tracking-wider">
-              Calculate Alignment
+            {/* PRIMARY ACTION BUTTON */}
+            <button type="submit" className="w-full py-4 bg-gradient-to-r from-pink-500 via-rose-500 to-fuchsia-600 text-white font-black text-sm rounded-2xl uppercase tracking-widest shadow-xl shadow-pink-950/30 hover:brightness-110 active:scale-[0.99] transition-all relative overflow-hidden group">
+              <span className="absolute inset-0 w-full h-full bg-white/10 transform -skew-x-12 -translate-x-full group-hover:animate-shine pointer-events-none" />
+              Explore Your Destiny
             </button>
           </form>
         ) : (
-          /* PERSONALIZED TWO-PARAGRAPH RESULTS */
-          <div className="space-y-5 animate-fade-in">
-            <div className="text-center">
-              <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold">{yourName} & {crushName}</p>
-              <div className="text-6xl font-black text-amber-400 my-1">{matchResult.score}%</div>
-              <div className={`text-xs px-3 py-1 font-bold rounded-full uppercase inline-block border
-                ${matchResult.colorTheme === 'emerald' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' : ''}
-                ${matchResult.colorTheme === 'amber' ? 'bg-amber-950/80 text-amber-400 border-amber-800' : ''}
-                ${matchResult.colorTheme === 'red' ? 'bg-rose-950/80 text-rose-400 border-rose-800' : ''}
-              `}>
-                {matchResult.summary}
-              </div>
-            </div>
-
-            {/* TWO-PARAGRAPH FORMATTED LIST */}
-            <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
+          
+          /* SHARABLE DISPLAY GRID */
+          <div className="space-y-5 animate-fade-in relative z-10">
+            
+            {/* HERO SCORE CARD */}
+            <div className="bg-gradient-to-b from-neutral-900/90 to-neutral-950 p-5 rounded-[2rem] border border-neutral-800 text-center shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
               
-              {/* ROMANTIC */}
-              <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-700/30 space-y-2.5">
-                <div className="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span>🌹</span> Romantic Destiny
+              <p className="text-[10px] text-pink-400 font-extrabold tracking-widest uppercase mb-1">Synastry Assessment</p>
+              <h3 className="text-base font-black text-neutral-100 tracking-tight">{yourName} & {crushName}</h3>
+              
+              {/* Massive Neon Styled Alignment Readout */}
+              <div className="my-2 relative inline-block">
+                <span className="absolute inset-0 bg-pink-500/10 rounded-full blur-2xl scale-90 animate-pulse" />
+                <div className="text-7xl font-black tracking-tighter bg-gradient-to-b from-white via-neutral-100 to-pink-200 bg-clip-text text-transparent relative drop-shadow-[0_2px_10px_rgba(219,39,119,0.15)]">
+                  {matchResult.score}<span className="text-xl text-pink-500 font-extrabold tracking-normal">%</span>
                 </div>
-                <p className="text-xs text-neutral-200 leading-relaxed"><span className="text-emerald-400 font-semibold">✨ Cosmic Strength:</span> {matchResult.lifeAreas.romantic.pro}</p>
-                <p className="text-xs text-neutral-300 leading-relaxed"><span className="text-rose-400 font-semibold">⚠️ Things to Consider:</span> {matchResult.lifeAreas.romantic.con}</p>
               </div>
 
-              {/* FINANCIAL */}
-              <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-700/30 space-y-2.5">
-                <div className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span>💰</span> Financial Alignment
+              {/* Dynamic Relationship Badge Mapping */}
+              <div className="space-y-0.5">
+                <div className={`text-sm font-black uppercase tracking-wider bg-gradient-to-r ${getPsychologicalBadge(matchResult.score).color} bg-clip-text text-transparent drop-shadow-sm`}>
+                  {getPsychologicalBadge(matchResult.score).title}
                 </div>
-                <p className="text-xs text-neutral-200 leading-relaxed"><span className="text-emerald-400 font-semibold">✨ Cosmic Strength:</span> {matchResult.lifeAreas.financial.pro}</p>
-                <p className="text-xs text-neutral-300 leading-relaxed"><span className="text-amber-400 font-semibold">⚠️ Things to Consider:</span> {matchResult.lifeAreas.financial.con}</p>
+                <div className="text-[10px] text-neutral-400 font-medium tracking-wide">
+                  {getPsychologicalBadge(matchResult.score).desc}
+                </div>
               </div>
 
-              {/* HEALTH */}
-              <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-700/30 space-y-2.5">
-                <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span>🌱</span> Health & Vitality Impact
-                </div>
-                <p className="text-xs text-neutral-200 leading-relaxed"><span className="text-emerald-400 font-semibold">✨ Cosmic Strength:</span> {matchResult.lifeAreas.health.pro}</p>
-                <p className="text-xs text-neutral-300 leading-relaxed"><span className="text-orange-400 font-semibold">⚠️ Things to Consider:</span> {matchResult.lifeAreas.health.con}</p>
+              <div className="mt-4 pt-3 border-t border-neutral-900 text-[9px] text-pink-500/40 tracking-widest font-mono">
+                CRUSH-ASTROLOGY.VERCEL.APP
               </div>
+            </div>
 
-              {/* FAMILY */}
-              <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-700/30 space-y-2.5">
-                <div className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span>🏡</span> Family & Domestic Life
+            {/* LOWER ATTRIBUTE PANELS */}
+            <div className="space-y-3 max-h-[290px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-neutral-800">
+              
+              {[
+                { id: 'romantic', label: 'Romantic Connection', emoji: '🌹', color: 'text-pink-400 border-pink-950/30' },
+                { id: 'financial', label: 'Financial Partnership', emoji: '💰', color: 'text-amber-400 border-neutral-900' },
+                { id: 'health', label: 'Energy & Biorhythms', emoji: '🌱', color: 'text-emerald-400 border-neutral-900' },
+                { id: 'family', label: 'Domestic Sanctuary', emoji: '🏡', color: 'text-blue-400 border-neutral-900' }
+              ].map((section) => (
+                <div key={section.id} className="bg-neutral-950/60 p-4 rounded-2xl border border-neutral-800/60 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className={`text-[11px] font-bold uppercase tracking-wider ${section.color.split(' ')[0]} flex items-center gap-1.5`}>
+                      <span>{section.emoji}</span> {section.label}
+                    </span>
+                  </div>
+                  
+                  <p className="text-xs text-neutral-300 leading-relaxed">
+                    <span className="text-pink-400 font-semibold">✨ Alignment:</span> {matchResult.lifeAreas[section.id].pro}
+                  </p>
+                  
+                  <div className="pt-1 border-t border-neutral-900">
+                    {!revealChallenges[section.id] ? (
+                      <button onClick={() => toggleChallenge(section.id)} className="text-[10px] font-bold text-neutral-400 hover:text-pink-400 tracking-wide flex items-center gap-1 transition-colors">
+                        🔓 Reveal Potential Conflict Catalyst →
+                      </button>
+                    ) : (
+                      <div className="space-y-1.5 animate-fade-in">
+                        <p className="text-xs text-neutral-400 leading-relaxed bg-neutral-900/30 p-2.5 rounded-xl border border-pink-950/20">
+                          <span className="text-rose-400 font-semibold">⚠️ Tension Vector:</span> {matchResult.lifeAreas[section.id].con}
+                        </p>
+                        <button onClick={() => toggleChallenge(section.id)} className="text-[9px] font-medium text-neutral-500 hover:text-pink-400/60 transition-colors">
+                          Hide Conflict Details
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <p className="text-xs text-neutral-200 leading-relaxed"><span className="text-emerald-400 font-semibold">✨ Cosmic Strength:</span> {matchResult.lifeAreas.family.pro}</p>
-                <p className="text-xs text-neutral-300 leading-relaxed"><span className="text-blue-400 font-semibold">⚠️ Things to Consider:</span> {matchResult.lifeAreas.family.con}</p>
-              </div>
+              ))}
 
             </div>
 
-            <button onClick={handleReset} className="w-full py-2.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 text-xs font-semibold rounded-xl transition">
-              Test Another Connection
-            </button>
+            {/* INTERACTIVE ACTION CONTROLS */}
+<div className="grid grid-cols-5 gap-2 pt-1 relative">
+  <button 
+    onClick={handleReset} 
+    className="col-span-2 py-3 bg-neutral-900 hover:bg-neutral-800 active:scale-95 text-neutral-400 hover:text-neutral-200 text-xs font-black rounded-xl uppercase tracking-wider transition-all border border-neutral-800/80"
+  >
+    Recalculate
+  </button>
+  
+  <button 
+    onClick={() => {
+      // 1. Pre-calculate values completely synchronously before firing the API
+      const badgeTitle = getPsychologicalBadge(matchResult.score).title;
+      const shareUrl = window.location.origin;
+      const shareText = `Tested my match with ${crushName} on the Karmic Destiny Bond engine and scored a ${matchResult.score}%! We are officially certified "${badgeTitle}." Check your destiny here:`;
+
+      // 2. Direct, clean evaluation blocks with zero operational lag
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        navigator.share({
+          title: 'Cosmic Synastry Alignment',
+          text: shareText,
+          url: shareUrl
+        })
+        .then(() => console.log('Successful share'))
+        .catch((err) => {
+          // If they explicitly cancel out of the native window, do nothing gracefully
+          console.log("Share dismissed:", err);
+        });
+      } else {
+        // Safe, immediate desktop fallback strategy
+        navigator.clipboard.writeText(`${shareText}\n${shareUrl}`)
+          .then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2500);
+          })
+          .catch(() => {
+            alert("Screenshot your scorecard to share it directly to your Stories! 🔥");
+          });
+      }
+    }} 
+    className="col-span-3 py-3 bg-gradient-to-r from-pink-500 to-fuchsia-600 hover:brightness-110 active:scale-95 text-white text-xs font-black rounded-xl uppercase tracking-wider transition-all shadow-md shadow-pink-950/30 relative overflow-hidden group"
+  >
+    <span className="absolute inset-0 w-full h-full bg-white/10 transform -skew-x-12 -translate-x-full group-hover:animate-shine pointer-events-none" />
+    {copied ? "📋 Link Copied!" : "🚀 Share Connection"}
+  </button>
+
+  {/* Toast Layer for Clipboard Fallback */}
+  {copied && (
+    <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-lg border border-pink-400/30 tracking-wide uppercase">
+      Alignment Copied to Clipboard!
+    </div>
+  )}
+</div>
           </div>
         )}
       </div>
