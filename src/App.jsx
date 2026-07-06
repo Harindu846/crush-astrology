@@ -63,14 +63,13 @@ export default function App() {
 
         {!matchResult ? (
           <form onSubmit={handleCalculate} className="space-y-4">
-            
-            {/* USER CARD */}
+            {/* INPUT FORM (STAYS EXACTLY SAME AS BEFORE) */}
             <div className="bg-neutral-900/60 p-4 rounded-2xl border border-neutral-700/30">
               <h2 className="text-sm font-bold text-amber-400 mb-2">⭐ Your Details</h2>
               <div className="space-y-2">
                 <input required type="text" placeholder="Your Name" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourName} onChange={(e) => setYourName(e.target.value)} />
                 <div className="grid grid-cols-2 gap-2">
-                  <input required type="text" placeholder="Birth City (e.g. Colombo)" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourCity} onChange={(e) => setYourCity(e.target.value)} />
+                  <input required type="text" placeholder="Birth City" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourCity} onChange={(e) => setYourCity(e.target.value)} />
                   <input required type="text" placeholder="Country" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourCountry} onChange={(e) => setYourCountry(e.target.value)} />
                 </div>
                 <input required type="date" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={yourDob} onChange={(e) => setYourDob(e.target.value)} />
@@ -82,13 +81,12 @@ export default function App() {
               </div>
             </div>
 
-            {/* CRUSH CARD */}
             <div className="bg-neutral-900/60 p-4 rounded-2xl border border-neutral-700/30">
               <h2 className="text-sm font-bold text-rose-400 mb-2">❤️ Your Crush</h2>
               <div className="space-y-2">
                 <input required type="text" placeholder="Their Name" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushName} onChange={(e) => setCrushName(e.target.value)} />
                 <div className="grid grid-cols-2 gap-2">
-                  <input required type="text" placeholder="Birth City (e.g. Kandy)" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushCity} onChange={(e) => setCrushCity(e.target.value)} />
+                  <input required type="text" placeholder="Birth City" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushCity} onChange={(e) => setCrushCity(e.target.value)} />
                   <input required type="text" placeholder="Country" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushCountry} onChange={(e) => setCrushCountry(e.target.value)} />
                 </div>
                 <input required type="date" className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none" value={crushDob} onChange={(e) => setCrushDob(e.target.value)} />
@@ -105,10 +103,10 @@ export default function App() {
             </button>
           </form>
         ) : (
-          /* DETAILED RESULTS DASHBOARD */
-          <div className="space-y-5">
+          /* DEEP LIFE FOCUS READINGS */
+          <div className="space-y-5 animate-fade-in">
             <div className="text-center">
-              <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold">{yourName} + {crushName}</p>
+              <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold">{yourName} & {crushName}</p>
               <div className="text-6xl font-black text-amber-400 my-1">{matchResult.score}%</div>
               <div className={`text-xs px-3 py-1 font-bold rounded-full uppercase inline-block border
                 ${matchResult.colorTheme === 'emerald' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800' : ''}
@@ -119,31 +117,41 @@ export default function App() {
               </div>
             </div>
 
-            {/* EXPANDED ASTROLOGICAL INSIGHTS */}
-            <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1">
-              <div className="bg-neutral-900/60 p-3 rounded-xl border border-neutral-700/40">
-                <span className="text-[10px] uppercase text-amber-400 font-bold tracking-wider block mb-1">🪐 Placement Compatibility (Rashi Koota)</span>
-                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.readings.rashiKoota}</p>
+            {/* THE FOUR LIFE SECTORS BREAKDOWN */}
+            <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+              
+              <div className="bg-neutral-900/50 p-4 rounded-xl border border-neutral-700/30">
+                <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase mb-1">
+                  <span>🌹</span> Romantic Destiny
+                </div>
+                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.lifeAreas.romantic}</p>
               </div>
 
-              <div className="bg-neutral-900/60 p-3 rounded-xl border border-neutral-700/40">
-                <span className="text-[10px] uppercase text-rose-400 font-bold tracking-wider block mb-1">🔥 Elemental Synergy Breakdown</span>
-                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.readings.elementHarmony}</p>
+              <div className="bg-neutral-900/50 p-4 rounded-xl border border-neutral-700/30">
+                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase mb-1">
+                  <span>💰</span> Financial Alignment
+                </div>
+                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.lifeAreas.financial}</p>
               </div>
 
-              <div className="bg-neutral-900/60 p-3 rounded-xl border border-neutral-700/40">
-                <span className="text-[10px] uppercase text-blue-400 font-bold tracking-wider block mb-1">👑 Planetary Lord Relationship</span>
-                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.readings.planetaryLords}</p>
+              <div className="bg-neutral-900/50 p-4 rounded-xl border border-neutral-700/30">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase mb-1">
+                  <span>🌱</span> Health & Vitality Impact
+                </div>
+                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.lifeAreas.health}</p>
               </div>
 
-              <div className="bg-neutral-900/60 p-3 rounded-xl border border-neutral-700/40">
-                <span className="text-[10px] uppercase text-emerald-400 font-bold tracking-wider block mb-1">🗺️ Regional Aura Mapping</span>
-                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.readings.geographicalBond}</p>
+              <div className="bg-neutral-900/50 p-4 rounded-xl border border-neutral-700/30">
+                <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase mb-1">
+                  <span>🏡</span> Family & Domestic Life
+                </div>
+                <p className="text-xs text-neutral-300 leading-relaxed">{matchResult.lifeAreas.family}</p>
               </div>
+
             </div>
 
-            <button onClick={handleReset} className="w-full py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 text-xs font-semibold rounded-xl">
-              Test Another Crush
+            <button onClick={handleReset} className="w-full py-2.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 text-xs font-semibold rounded-xl transition">
+              Test Another Connection
             </button>
           </div>
         )}
