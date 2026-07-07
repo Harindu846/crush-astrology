@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getApproximatedRashi, calculateCrushMatch } from './astrologyData';
 
 export default function App() {
@@ -22,6 +22,31 @@ export default function App() {
   const [matchResult, setMatchResult] = useState(null);
   const [revealChallenges, setRevealChallenges] = useState({});
   const [copied, setCopied] = useState(false);
+  const [isShared, setIsShared] = useState(false); // Tracks if viewing a friend's shared link
+
+  // Handle incoming shared links automatically when the page loads
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('shared') === 'true') {
+      setIsShared(true);
+      
+      const sharedScore = parseInt(params.get('score'), 10);
+      const sName = params.get('name') || 'Someone';
+      const cName = params.get('crush') || 'Their Crush';
+
+      setYourName(sName);
+      setCrushName(cName);
+      setMatchResult({
+        score: sharedScore,
+        lifeAreas: {
+          romantic: { pro: "Deep celestial chemistry shared between souls.", con: "Watch for communication gaps." },
+          financial: { pro: "Strong foundational support for shared goals.", con: "Keep budgets transparent." },
+          health: { pro: "Harmonious energetic frequencies.", con: "Balance individual downtime." },
+          family: { pro: "Natural domestic resonance and comfort.", con: "Respect personal spaces." }
+        }
+      });
+    }
+  }, []);
 
   const triggerCosmicCalculation = (e) => {
     e.preventDefault();
@@ -251,58 +276,56 @@ export default function App() {
             </div>
 
             {/* INTERACTIVE ACTION CONTROLS */}
-<div className="grid grid-cols-5 gap-2 pt-1 relative">
-  <button 
-    onClick={handleReset} 
-    className="col-span-2 py-3 bg-neutral-900 hover:bg-neutral-800 active:scale-95 text-neutral-400 hover:text-neutral-200 text-xs font-black rounded-xl uppercase tracking-wider transition-all border border-neutral-800/80"
-  >
-    Recalculate
-  </button>
-  
-  <button 
-    onClick={() => {
-      // 1. Pre-calculate values completely synchronously before firing the API
-      const badgeTitle = getPsychologicalBadge(matchResult.score).title;
-      const shareUrl = window.location.origin;
-      const shareText = `Tested my match with ${crushName} on the Karmic Destiny Bond engine and scored a ${matchResult.score}%! We are officially certified "${badgeTitle}." Check your destiny here:`;
+            <div className="grid grid-cols-5 gap-2 pt-1 relative">
+              
+              <button 
+                onClick={() => {
+                  window.history.replaceState({}, document.title, window.location.pathname);
+                  setIsShared(false);
+                  handleReset();
+                }} 
+                className="col-span-2 py-3 bg-neutral-900 hover:bg-neutral-800 active:scale-95 text-neutral-400 hover:text-neutral-200 text-[10px] font-black rounded-xl uppercase tracking-wider transition-all border border-neutral-800/80 text-center leading-tight"
+              >
+                {isShared ? "Test Your Own" : "Recalculate"}
+              </button>
+              
+              <button 
+                onClick={() => {
+                  const badgeTitle = getPsychologicalBadge(matchResult.score).title;
+                  const shareUrl = `${window.location.origin}?shared=true&score=${matchResult.score}&name=${encodeURIComponent(yourName)}&crush=${encodeURIComponent(crushName)}`;
+                  const shareText = `Tested my match with ${crushName} on the Karmic Destiny Bond engine and scored a ${matchResult.score}%! We are officially certified "${badgeTitle}." View our result here:`;
 
-      // 2. Direct, clean evaluation blocks with zero operational lag
-      if (typeof navigator !== 'undefined' && navigator.share) {
-        navigator.share({
-          title: 'Cosmic Synastry Alignment',
-          text: shareText,
-          url: shareUrl
-        })
-        .then(() => console.log('Successful share'))
-        .catch((err) => {
-          // If they explicitly cancel out of the native window, do nothing gracefully
-          console.log("Share dismissed:", err);
-        });
-      } else {
-        // Safe, immediate desktop fallback strategy
-        navigator.clipboard.writeText(`${shareText}\n${shareUrl}`)
-          .then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2500);
-          })
-          .catch(() => {
-            alert("Screenshot your scorecard to share it directly to your Stories! 🔥");
-          });
-      }
-    }} 
-    className="col-span-3 py-3 bg-gradient-to-r from-pink-500 to-fuchsia-600 hover:brightness-110 active:scale-95 text-white text-xs font-black rounded-xl uppercase tracking-wider transition-all shadow-md shadow-pink-950/30 relative overflow-hidden group"
-  >
-    <span className="absolute inset-0 w-full h-full bg-white/10 transform -skew-x-12 -translate-x-full group-hover:animate-shine pointer-events-none" />
-    {copied ? "📋 Link Copied!" : "🚀 Share Connection"}
-  </button>
+                  if (typeof navigator !== 'undefined' && navigator.share) {
+                    navigator.share({
+                      title: 'Cosmic Synastry Alignment',
+                      text: shareText,
+                      url: shareUrl
+                    })
+                    .catch((err) => console.log("Share dismissed:", err));
+                  } else {
+                    navigator.clipboard.writeText(`${shareText}\n${shareUrl}`)
+                      .then(() => {
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2500);
+                      })
+                      .catch(() => {
+                        alert("Screenshot your scorecard to share it directly to your Stories! 🔥");
+                      });
+                  }
+                }} 
+                className="col-span-3 py-3 bg-gradient-to-r from-pink-500 to-fuchsia-600 hover:brightness-110 active:scale-95 text-white text-xs font-black rounded-xl uppercase tracking-wider transition-all shadow-md shadow-pink-950/30 relative overflow-hidden group"
+              >
+                <span className="absolute inset-0 w-full h-full bg-white/10 transform -skew-x-12 -translate-x-full group-hover:animate-shine pointer-events-none" />
+                {copied ? "📋 Link Copied!" : "🚀 Share Connection"}
+              </button>
 
-  {/* Toast Layer for Clipboard Fallback */}
-  {copied && (
-    <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-lg border border-pink-400/30 tracking-wide uppercase">
-      Alignment Copied to Clipboard!
-    </div>
-  )}
-</div>
+              {/* Toast Layer for Clipboard Fallback */}
+              {copied && (
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-lg border border-pink-400/30 tracking-wide uppercase">
+                  Alignment Copied to Clipboard!
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
