@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
-import { getApproximatedRashi, calculateCrushMatch } from './data/astrologyData';
+import { getApproximatedRashi, calculateCrushMatch } from './astrologyData';
 
 export default function App() {
   const [yourName, setYourName] = useState('');
@@ -22,53 +22,6 @@ export default function App() {
   const [matchResult, setMatchResult] = useState(null);
   const [revealChallenges, setRevealChallenges] = useState({});
   const [copied, setCopied] = useState(false);
-  const [isShared, setIsShared] = useState(false); // Tracks if viewing a friend's shared link
-
-  // Handle incoming shared links automatically when the page loads
-  // Handle incoming shared links automatically when the page loads
-  // Handle incoming shared links automatically when the page loads
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('shared') === 'true') {
-      setIsShared(true);
-      
-      const sharedScore = parseInt(params.get('score'), 10) || 75;
-      const sName = params.get('name') || 'Someone';
-      const cName = params.get('crush') || 'Their Crush';
-
-      setYourName(sName);
-      setCrushName(cName);
-
-      try {
-        // Run engine with available data fallbacks
-        const regeneratedResults = calculateCrushMatch(
-          "Mesha", "Vrishabha", 
-          "Colombo, Sri Lanka", "Colombo, Sri Lanka", 
-          sName, cName
-        );
-
-        if (regeneratedResults && regeneratedResults.lifeAreas) {
-          regeneratedResults.score = sharedScore;
-          setMatchResult(regeneratedResults);
-        } else {
-          throw new Error("Incomplete results object structure");
-        }
-      } catch (error) {
-        console.error("Failed to dynamically hydrate shared results:", error);
-        
-        // 🛡️ Bulletproof fallback matching ALL 4 required IDs: romantic, financial, health, family
-        setMatchResult({
-          score: sharedScore,
-          lifeAreas: {
-            romantic: { pro: "Deep celestial chemistry shared between your souls.", con: "Watch out for subtle communication gaps over time." },
-            financial: { pro: "Strong foundational support for building shared material goals.", con: "Keep budgets completely transparent to maintain trust." },
-            health: { pro: "Harmonious energetic frequencies and complementary lifestyles.", con: "Balance collective activities with individual downtime." },
-            family: { pro: "Natural domestic resonance and comfortable shared spaces.", con: "Ensure personal boundaries are respected in the home." }
-          }
-        });
-      }
-    }
-  }, []);
 
   const triggerCosmicCalculation = (e) => {
     e.preventDefault();
@@ -170,7 +123,7 @@ export default function App() {
           </div>
         ) : !matchResult ? (
           
-          /* GLOWING INPUT CONTROLS */
+          /* INPUT CONTROLS */
           <form onSubmit={triggerCosmicCalculation} className="space-y-4 relative z-10">
             
             {/* INPUT BLOCK A: YOUR DETAILS */}
@@ -223,7 +176,7 @@ export default function App() {
           </form>
         ) : (
           
-          /* SHARABLE DISPLAY GRID */
+          /* DISPLAY GRID */
           <div className="space-y-5 animate-fade-in relative z-10">
             
             {/* HERO SCORE CARD */}
@@ -233,7 +186,6 @@ export default function App() {
               <p className="text-[10px] text-pink-400 font-extrabold tracking-widest uppercase mb-1">Synastry Assessment</p>
               <h3 className="text-base font-black text-neutral-100 tracking-tight">{yourName} & {crushName}</h3>
               
-              {/* Massive Neon Styled Alignment Readout */}
               <div className="my-2 relative inline-block">
                 <span className="absolute inset-0 bg-pink-500/10 rounded-full blur-2xl scale-90 animate-pulse" />
                 <div className="text-7xl font-black tracking-tighter bg-gradient-to-b from-white via-neutral-100 to-pink-200 bg-clip-text text-transparent relative drop-shadow-[0_2px_10px_rgba(219,39,119,0.15)]">
@@ -241,7 +193,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Dynamic Relationship Badge Mapping */}
               <div className="space-y-0.5">
                 <div className={`text-sm font-black uppercase tracking-wider bg-gradient-to-r ${getPsychologicalBadge(matchResult.score).color} bg-clip-text text-transparent drop-shadow-sm`}>
                   {getPsychologicalBadge(matchResult.score).title}
@@ -260,14 +211,14 @@ export default function App() {
             <div className="space-y-3 max-h-[290px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-neutral-800">
               
               {[
-                { id: 'romantic', label: 'Romantic Connection', emoji: '🌹', color: 'text-pink-400 border-pink-950/30' },
-                { id: 'financial', label: 'Financial Partnership', emoji: '💰', color: 'text-amber-400 border-neutral-900' },
-                { id: 'health', label: 'Energy & Biorhythms', emoji: '🌱', color: 'text-emerald-400 border-neutral-900' },
-                { id: 'family', label: 'Domestic Sanctuary', emoji: '🏡', color: 'text-blue-400 border-neutral-900' }
+                { id: 'romantic', label: 'Romantic Connection', emoji: '🌹', color: 'text-pink-400' },
+                { id: 'financial', label: 'Financial Partnership', emoji: '💰', color: 'text-amber-400' },
+                { id: 'health', label: 'Energy & Biorhythms', emoji: '🌱', color: 'text-emerald-400' },
+                { id: 'family', label: 'Domestic Sanctuary', emoji: '🏡', color: 'text-blue-400' }
               ].map((section) => (
                 <div key={section.id} className="bg-neutral-950/60 p-4 rounded-2xl border border-neutral-800/60 space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className={`text-[11px] font-bold uppercase tracking-wider ${section.color.split(' ')[0]} flex items-center gap-1.5`}>
+                    <span className={`text-[11px] font-bold uppercase tracking-wider ${section.color} flex items-center gap-1.5`}>
                       <span>{section.emoji}</span> {section.label}
                     </span>
                   </div>
@@ -299,23 +250,18 @@ export default function App() {
 
             {/* INTERACTIVE ACTION CONTROLS */}
             <div className="grid grid-cols-5 gap-2 pt-1 relative">
-              
               <button 
-                onClick={() => {
-                  window.history.replaceState({}, document.title, window.location.pathname);
-                  setIsShared(false);
-                  handleReset();
-                }} 
-                className="col-span-2 py-3 bg-neutral-900 hover:bg-neutral-800 active:scale-95 text-neutral-400 hover:text-neutral-200 text-[10px] font-black rounded-xl uppercase tracking-wider transition-all border border-neutral-800/80 text-center leading-tight"
+                onClick={handleReset} 
+                className="col-span-2 py-3 bg-neutral-900 hover:bg-neutral-800 active:scale-95 text-neutral-400 hover:text-neutral-200 text-xs font-black rounded-xl uppercase tracking-wider transition-all border border-neutral-800/80"
               >
-                {isShared ? "Test Your Own" : "Recalculate"}
+                Recalculate
               </button>
               
               <button 
                 onClick={() => {
                   const badgeTitle = getPsychologicalBadge(matchResult.score).title;
-                  const shareUrl = `${window.location.origin}?shared=true&score=${matchResult.score}&name=${encodeURIComponent(yourName)}&crush=${encodeURIComponent(crushName)}`;
-                  const shareText = `Tested my match with ${crushName} on the Karmic Destiny Bond engine and scored a ${matchResult.score}%! We are officially certified "${badgeTitle}." View our result here:`;
+                  const shareUrl = window.location.origin;
+                  const shareText = `Tested my match with ${crushName} on the Karmic Destiny Bond engine and scored a ${matchResult.score}%! We are officially certified "${badgeTitle}." Check your destiny here:`;
 
                   if (typeof navigator !== 'undefined' && navigator.share) {
                     navigator.share({
