@@ -22,6 +22,33 @@ export default function App() {
   const [matchResult, setMatchResult] = useState(null);
   const [revealChallenges, setRevealChallenges] = useState({});
   const [copied, setCopied] = useState(false);
+  const [isShared, setIsShared] = useState(false); // Tracks if the visitor came from a shared link
+
+  // Handle incoming shared links automatically when the page loads
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('shared') === 'true') {
+      setIsShared(true);
+      
+      const sharedScore = parseInt(params.get('score'), 10) || 75;
+      const sName = params.get('name') || 'Someone';
+      const cName = params.get('crush') || 'Their Crush';
+
+      setYourName(sName);
+      setCrushName(cName);
+      
+      // Setting up the stable results view matching all 4 layout categories
+      setMatchResult({
+        score: sharedScore,
+        lifeAreas: {
+          romantic: { pro: "Deep celestial chemistry shared between your cosmic paths.", con: "Watch out for subtle communication gaps over time." },
+          financial: { pro: "Strong foundational alignment for shared material targets.", con: "Keep money matters fully transparent to maintain trust." },
+          health: { pro: "Harmonious energetic frequencies and complementary lifestyles.", con: "Balance collective activities with individual downtime." },
+          family: { pro: "Natural domestic resonance and highly comfortable shared spaces.", con: "Ensure personal boundaries are fully respected in the home." }
+        }
+      });
+    }
+  }, []);
 
   const triggerCosmicCalculation = (e) => {
     e.preventDefault();
@@ -224,7 +251,7 @@ export default function App() {
                   </div>
                   
                   <p className="text-xs text-neutral-300 leading-relaxed">
-                    <span className="text-pink-400 font-semibold">✨ Alignment:</span> {matchResult.lifeAreas[section.id].pro}
+                    <span className="text-pink-400 font-semibold">✨ Alignment:</span> {matchResult.lifeAreas[section.id]?.pro}
                   </p>
                   
                   <div className="pt-1 border-t border-neutral-900">
@@ -235,7 +262,7 @@ export default function App() {
                     ) : (
                       <div className="space-y-1.5 animate-fade-in">
                         <p className="text-xs text-neutral-400 leading-relaxed bg-neutral-900/30 p-2.5 rounded-xl border border-pink-950/20">
-                          <span className="text-rose-400 font-semibold">⚠️ Tension Vector:</span> {matchResult.lifeAreas[section.id].con}
+                          <span className="text-rose-400 font-semibold">⚠️ Tension Vector:</span> {matchResult.lifeAreas[section.id]?.con}
                         </p>
                         <button onClick={() => toggleChallenge(section.id)} className="text-[9px] font-medium text-neutral-500 hover:text-pink-400/60 transition-colors">
                           Hide Conflict Details
@@ -251,17 +278,22 @@ export default function App() {
             {/* INTERACTIVE ACTION CONTROLS */}
             <div className="grid grid-cols-5 gap-2 pt-1 relative">
               <button 
-                onClick={handleReset} 
-                className="col-span-2 py-3 bg-neutral-900 hover:bg-neutral-800 active:scale-95 text-neutral-400 hover:text-neutral-200 text-xs font-black rounded-xl uppercase tracking-wider transition-all border border-neutral-800/80"
+                onClick={() => {
+                  window.history.replaceState({}, document.title, window.location.pathname);
+                  setIsShared(false);
+                  handleReset();
+                }} 
+                className="col-span-2 py-3 bg-neutral-900 hover:bg-neutral-800 active:scale-95 text-neutral-400 hover:text-neutral-200 text-[10px] font-black rounded-xl uppercase tracking-wider transition-all border border-neutral-800/80 text-center leading-tight"
               >
-                Recalculate
+                {isShared ? "Test Your Own" : "Recalculate"}
               </button>
               
               <button 
                 onClick={() => {
                   const badgeTitle = getPsychologicalBadge(matchResult.score).title;
-                  const shareUrl = window.location.origin;
-                  const shareText = `Tested my match with ${crushName} on the Karmic Destiny Bond engine and scored a ${matchResult.score}%! We are officially certified "${badgeTitle}." Check your destiny here:`;
+                  // Encode data into the URL params smoothly
+                  const shareUrl = `${window.location.origin}?shared=true&score=${matchResult.score}&name=${encodeURIComponent(yourName)}&crush=${encodeURIComponent(crushName)}`;
+                  const shareText = `Tested my match with ${crushName} on the Karmic Destiny Bond engine and scored a ${matchResult.score}%! We are officially certified "${badgeTitle}." View our result here:`;
 
                   if (typeof navigator !== 'undefined' && navigator.share) {
                     navigator.share({
