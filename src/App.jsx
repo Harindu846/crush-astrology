@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
-import { getApproximatedRashi, calculateCrushMatch } from './astrologyData';
+import { getApproximatedRashi, calculateCrushMatch } from './data/astrologyData';
 
 export default function App() {
   const [yourName, setYourName] = useState('');
@@ -31,25 +31,37 @@ export default function App() {
     if (params.get('shared') === 'true') {
       setIsShared(true);
       
-      const sharedScore = parseInt(params.get('score'), 10);
+      const sharedScore = parseInt(params.get('score'), 10) || 75;
       const sName = params.get('name') || 'Someone';
       const cName = params.get('crush') || 'Their Crush';
 
       setYourName(sName);
       setCrushName(cName);
 
-      // 🔄 FIX: Dynamically run calculations using placeholder signs to rebuild the real data array structures
-      // This ensures your .lifeAreas['romantic'].pro and .con paragraphs populate with full content!
-      const regeneratedResults = calculateCrushMatch(
-        "Mesha", "Vrishabha", // Standard fallback signs to populate full paragraphs safely
-        "Colombo, Sri Lanka", "Colombo, Sri Lanka", 
-        sName, cName
-      );
+      try {
+        // Run engine with available data
+        const regeneratedResults = calculateCrushMatch(
+          "Mesha", "Vrishabha", 
+          "Colombo, Sri Lanka", "Colombo, Sri Lanka", 
+          sName, cName
+        );
 
-      // Force the original shared score to remain accurate, but use the rich data descriptions
-      regeneratedResults.score = sharedScore;
-
-      setMatchResult(regeneratedResults);
+        if (regeneratedResults) {
+          regeneratedResults.score = sharedScore;
+          setMatchResult(regeneratedResults);
+        }
+      } catch (error) {
+        console.error("Failed to dynamically hydrate shared results:", error);
+        
+        // 🛡️ Safe fallback structure so the page never goes blank if the engine errors out
+        setMatchResult({
+          score: sharedScore,
+          lifeAreas: {
+            romantic: { pro: "Connected celestial alignment.", con: "Keep working on communication boundaries." },
+            energy: { pro: "Harmonious energetic frequencies", con: "Balance individual downtime" }
+          }
+        });
+      }
     }
   }, []);
 
