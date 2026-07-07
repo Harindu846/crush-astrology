@@ -26,6 +26,7 @@ export default function App() {
 
   // Handle incoming shared links automatically when the page loads
   // Handle incoming shared links automatically when the page loads
+  // Handle incoming shared links automatically when the page loads
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('shared') === 'true') {
@@ -39,26 +40,30 @@ export default function App() {
       setCrushName(cName);
 
       try {
-        // Run engine with available data
+        // Run engine with available data fallbacks
         const regeneratedResults = calculateCrushMatch(
           "Mesha", "Vrishabha", 
           "Colombo, Sri Lanka", "Colombo, Sri Lanka", 
           sName, cName
         );
 
-        if (regeneratedResults) {
+        if (regeneratedResults && regeneratedResults.lifeAreas) {
           regeneratedResults.score = sharedScore;
           setMatchResult(regeneratedResults);
+        } else {
+          throw new Error("Incomplete results object structure");
         }
       } catch (error) {
         console.error("Failed to dynamically hydrate shared results:", error);
         
-        // 🛡️ Safe fallback structure so the page never goes blank if the engine errors out
+        // 🛡️ Bulletproof fallback matching ALL 4 required IDs: romantic, financial, health, family
         setMatchResult({
           score: sharedScore,
           lifeAreas: {
-            romantic: { pro: "Connected celestial alignment.", con: "Keep working on communication boundaries." },
-            energy: { pro: "Harmonious energetic frequencies", con: "Balance individual downtime" }
+            romantic: { pro: "Deep celestial chemistry shared between your souls.", con: "Watch out for subtle communication gaps over time." },
+            financial: { pro: "Strong foundational support for building shared material goals.", con: "Keep budgets completely transparent to maintain trust." },
+            health: { pro: "Harmonious energetic frequencies and complementary lifestyles.", con: "Balance collective activities with individual downtime." },
+            family: { pro: "Natural domestic resonance and comfortable shared spaces.", con: "Ensure personal boundaries are respected in the home." }
           }
         });
       }
