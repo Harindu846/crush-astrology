@@ -25,6 +25,7 @@ export default function App() {
   const [isShared, setIsShared] = useState(false); // Tracks if viewing a friend's shared link
 
   // Handle incoming shared links automatically when the page loads
+  // Handle incoming shared links automatically when the page loads
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('shared') === 'true') {
@@ -36,15 +37,19 @@ export default function App() {
 
       setYourName(sName);
       setCrushName(cName);
-      setMatchResult({
-        score: sharedScore,
-        lifeAreas: {
-          romantic: { pro: "Deep celestial chemistry shared between souls.", con: "Watch for communication gaps." },
-          financial: { pro: "Strong foundational support for shared goals.", con: "Keep budgets transparent." },
-          health: { pro: "Harmonious energetic frequencies.", con: "Balance individual downtime." },
-          family: { pro: "Natural domestic resonance and comfort.", con: "Respect personal spaces." }
-        }
-      });
+
+      // 🔄 FIX: Dynamically run calculations using placeholder signs to rebuild the real data array structures
+      // This ensures your .lifeAreas['romantic'].pro and .con paragraphs populate with full content!
+      const regeneratedResults = calculateCrushMatch(
+        "Mesha", "Vrishabha", // Standard fallback signs to populate full paragraphs safely
+        "Colombo, Sri Lanka", "Colombo, Sri Lanka", 
+        sName, cName
+      );
+
+      // Force the original shared score to remain accurate, but use the rich data descriptions
+      regeneratedResults.score = sharedScore;
+
+      setMatchResult(regeneratedResults);
     }
   }, []);
 
